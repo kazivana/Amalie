@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
 ]
 
-ROOT_URLCONF = 'amalie_demo.urls'
+ROOT_URLCONF = 'amalie_main.urls'
 
 TEMPLATES = [
     {
@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'amalie_demo.wsgi.application'
+WSGI_APPLICATION = 'amalie_main.wsgi.application'
 
 
 # Database
