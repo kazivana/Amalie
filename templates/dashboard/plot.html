@@ -1,0 +1,35 @@
+{% load js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+        <script>
+            function drawLineGraph(name, data, id) {
+                let x = []
+                let y = []
+                data.forEach(row=>{
+                    x.push(row['date'])
+                    y.push(row['value'])
+                })
+                let dataset = {
+                    label: x,
+                    data: y,
+                }
+                const ctx = document.getElementById(name).getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: x,
+                        datasets: [{
+                            label: 'value',
+                            data: y,
+                            borderColor: 'red'
+                        }]
+                    },
+                })
+            }
+            let table = {{ data | js }};
+                table.forEach(obj=>{
+                    if(obj.data.length > 0){
+                        drawLineGraph(obj.name,obj.data)
+                    }
+                })
+        </script>
+

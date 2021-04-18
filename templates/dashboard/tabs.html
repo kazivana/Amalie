@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Data{% endblock %}
+{% block content %}
+    {% for table in data %}
+        {% if table.data %}
+        <h1>{{ table.name }}</h1>
+        <div style="height: 400px; width:600px;overflow-y: scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <td>id</td>
+                        <td>sensor</td>
+                        <td>date</td>
+                        <td>time</td>
+                        <td>value</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in table.data %}
+                        <tr>
+                            <td>{{ row.id }}</td>
+                            <td>{{ row.sensor_name }}</td>
+                            <td>{{ row.date }}</td>
+                            <td>{{ row.time }}</td>
+                            <td>{{ row.value }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <canvas id={{ table.name }} ></canvas>
+        </div>
+        {% endif %}
+    {% endfor %}
+    {% include 'dashboard/plot.html' with data=data %}
+    {% include 'dashboard/save.html' with save=save%}
+
+{% endblock %}

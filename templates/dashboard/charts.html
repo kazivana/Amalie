@@ -1,0 +1,14 @@
+<!--jQuery-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<form action="/dashboard/plot/" action="post">
+    {% csrf_token %}
+    {{ selch.as_p }}
+</form>
+
+{% for table in data %}
+    {% if table.data %}
+        <h3>{{ table.name }}</h3>
+        {% include 'dashboard/plot.html' with table=table %}
+    {% endif %}
+{% endfor %}
