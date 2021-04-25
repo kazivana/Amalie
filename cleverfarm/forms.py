@@ -18,6 +18,7 @@ formats = [
 ]
 
 
+
 class Select(forms.Form):
     sensor_name = forms.CharField(label='Sensor name', widget=forms.Select(choices=SENSORS), required=False)
     date_from = forms.DateField(widget= forms.SelectDateWidget)

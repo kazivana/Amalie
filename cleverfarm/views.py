@@ -78,3 +78,4 @@ def line_chart(req):
         'data':body,
     }, safe=False)
     return res
+

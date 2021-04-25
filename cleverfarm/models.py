@@ -1,5 +1,6 @@
 from django.db import models
 
+table_names = ['SWP', 'TEMPERATURE', 'PRESSURE', 'HUMIDITY', 'RAINFALL', 'LEAF_WETNESS', 'WIND_DIRECTION', 'WIND_GUST', 'WIND_SPEED']
 
 
 class Data(models.Model):
@@ -7,6 +8,7 @@ class Data(models.Model):
     date = models.DateField()
     time = models.TimeField()
     value = models.FloatField(null=True)
+    signal = models.CharField(max_length=200)
 
     objects = models.Manager()
 
@@ -25,45 +27,45 @@ class Sensors(models.Model):
 
 class Swp(Data):
     class Meta:
-        db_table = 'swp'
+        db_table = table_names[0]
 
 
 class Tmp(Data):
     class Meta:
-        db_table = 'tmp'
+        db_table = table_names[1]
 
 
 class Prs(Data):
     class Meta:
-        db_table = 'prs'
+        db_table = table_names[2]
 
 
 class Hum(Data):
     class Meta:
-        db_table = 'hum'
+        db_table = table_names[3]
 
 
 class Rnf(Data):
     class Meta:
-        db_table = 'rnf'
+        db_table = table_names[4]
 
 
 class Lfw(Data):
     class Meta:
-        db_table = 'lfw'
-
-
-class Wns(Data):
-    class Meta:
-        db_table = 'wns'
-
-
-class Wng(Data):
-    class Meta:
-        db_table = 'wng'
+        db_table = table_names[5]
 
 
 class Wnd(Data):
     class Meta:
-        db_table = 'wnd'
+        db_table = table_names[6]
+
+
+class Wng(Data):
+    class Meta:
+        db_table = table_names[7]
+
+
+class Wns(Data):
+    class Meta:
+        db_table = table_names[8]
 
