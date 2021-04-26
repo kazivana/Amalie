@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 table_names = ['SWP', 'TEMPERATURE', 'PRESSURE', 'HUMIDITY', 'RAINFALL', 'LEAF_WETNESS', 'WIND_DIRECTION', 'WIND_GUST', 'WIND_SPEED']
@@ -15,6 +17,16 @@ class Data(models.Model):
     class Meta:
         managed = False
         abstract = True
+
+
+class Stats(models.Model):
+    sensor_name = models.CharField(max_length=255)
+    year = models.IntegerField(default=datetime.date.today().year)
+    month = models.SmallIntegerField(default=datetime.date.today().month)
+    feature = models.CharField(max_length=255)
+    mean = models.FloatField()
+    min = models.FloatField()
+    max = models.FloatField()
 
 
 class Sensors(models.Model):
