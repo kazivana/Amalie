@@ -9,9 +9,10 @@ import psycopg2
 import requests
 import json
 
-# Load variables from .env file
+# Load variables from .env file directly so we wouldn't have to hard code parameters
 load_dotenv()
-# Const
+
+# List of APIs to extract data from
 api = ['https://p0c1rtf2ce.execute-api.eu-central-1.amazonaws.com/prod/e06990a6-2c04-4bb3-a5be-48ffea49f603',
        'https://p0c1rtf2ce.execute-api.eu-central-1.amazonaws.com/prod/22626fb7-dbbb-45ef-8787-f3bccbb2526b',
        'https://p0c1rtf2ce.execute-api.eu-central-1.amazonaws.com/prod/f07231f8-39bc-4133-b799-591665b166a9',
@@ -29,12 +30,15 @@ params = {
 }
 
 
-# Object with data from APIs
+# Object with data from APIs which is received on regular time intervals
 class CleverfarmAPI:
+
+    # Initialize API and create a new dictionary called data
     def __init__(self):
         self.api = api
         self.data = {}
 
+    # Taking from the API the names of the variables for creating tables directly
     def get_features(self):
         for req in self.api:
             res = requests.get(req)
@@ -45,7 +49,8 @@ class CleverfarmAPI:
             else:
                 print('CONNECTION ERROR: ', req.status_code)
         return self.data
-
+        
+    # Creating a dataframe from the API
     def create_df_from_api(self):
         for req in self.api:
             res = requests.get(req)
@@ -66,14 +71,16 @@ class CleverfarmAPI:
                 print('CONNECTION ERROR: ', req.status_code)
         return self.data
 
+# The data has now been retrieved from the API, so we work on the Database data next
 
 # Object for data stored in DB
 class DataDB:
     def __init__(self, schema):
-        self.params = params
-        self.conn = psycopg2.connect(**params)
-        self.schema = schema
+        self.params = params # the parameters are the connection to the database, used to initialize DB
+        self.conn = psycopg2.connect(**params) # creating the connection to the DB
+        self.schema = schema # the data will be distributed by schemas, each sensor will have its own schema
 
+    # Select any NA data
     def get_nan(self, tables):
         if self.conn:
             cursor = self.conn.cursor()
@@ -82,6 +89,7 @@ class DataDB:
             cursor.close()
             return temp
 
+    # function for retrieving data for current day and previous day
     def get_actual(self, tables):
         if self.conn:
             cursor = self.conn.cursor()
@@ -90,6 +98,7 @@ class DataDB:
             cursor.close()
             return temp
 
+    # Create rows for the data table
     def insert_rows(self,tables, rows):
         if self.conn:
             query = "INSERT INTO %s.\"%s\"(sensor_name,date,time,value,signal) VALUES(%%s,%%s,%%s,%%s,%%s)" % (self.schema, tables)
@@ -98,7 +107,7 @@ class DataDB:
             self.conn.commit()
             cursor.close()
 
-
+    # Check whether there is a new NA value
     def update_nan(self,tables,row):
         if self.conn:
             query = "UPDATE %s.\"%s\" SET signal = %%s, value = %%s " \
@@ -109,6 +118,7 @@ class DataDB:
             cursor.close()
             print('Updated data in {} successfully'.format(tables))
 
+    # Calculating the statistical values
     def collect_stats(self,tables,month_start, month_end):
         if self.conn:
             cursor = self.conn.cursor()
@@ -127,7 +137,7 @@ class DataDB:
         df.insert(6, 'max', temp.groupby(['sensor_name']).max().values)
         return df
 
-
+    # Inserting the calculations from previous function into the tables
     def insert_stats(self,tables,feat_stats):
         stat_rows = [tuple(x) for x in feat_stats.to_numpy()]
         if self.conn:
