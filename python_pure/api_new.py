@@ -107,7 +107,7 @@ class DataDB:
             self.conn.commit()
             cursor.close()
 
-    # Check whether there is a new NA value
+    # Updates NA's to values
     def update_nan(self,tables,row):
         if self.conn:
             query = "UPDATE %s.\"%s\" SET signal = %%s, value = %%s " \
